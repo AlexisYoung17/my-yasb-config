@@ -1,0 +1,244 @@
+watch_stylesheet: true
+watch_config: true
+
+bars:
+  status-bar:
+    enabled: true
+    screens: ['*']
+    class_name: "yasb-bar"
+    alignment:
+      position: "top"
+      center: true
+    blur_effect:
+      enabled: true 
+      acrylic: true 
+      dark_mode: false
+      round_corners: false
+      border_color: None
+    window_flags:
+      always_on_top: false
+      windows_app_bar: true
+    dimensions:
+      width: "100%"
+      height: 40
+    padding:
+      top: 0
+      left: 0
+      bottom: 0
+      right: 0
+    widgets:
+      left:
+        [
+          "power_menu",
+          "active_window",
+        ]
+      center: ["clock"]
+      right:
+        [
+          "media_player",
+          "cpu",
+          "memory",
+          "disk",
+          "volume",
+          "wifi",
+          "notifications",
+          "traffic"
+        ]
+
+widgets:
+  active_window:
+    type: "yasb.active_window.ActiveWindowWidget"
+    options:
+      label: "{win[title]}"
+      label_alt: "[class_name='{win[class_name]}' exe='{win[process][name]}' hwnd={win[hwnd]}]"
+      label_no_window: ""
+      max_length: 56
+      label_icon: true
+      label_icon_size: 16
+      max_length_ellipsis: ".."
+      monitor_exclusive: false
+
+  clock:
+      type: "yasb.clock.ClockWidget"
+      options:
+        label: "{%a, %d %b %I:%M}"
+        calendar:
+          blur: true
+          round_corners: false
+          alignment: "center"
+          direction: "down"
+          offset_top: 2
+          show_holidays: true
+          country_code: "US"
+          holiday_color: "#fa9d9d"
+
+  cpu:
+      type: "yasb.cpu.CpuWidget"
+      options:
+        label: "<span>\ueea1</span>"
+        menu:
+          enabled: true
+          blur: true
+          round_corners: false
+          alignment: "center"
+          direction: "down"
+          offset_top: 2
+          pin_icon: "\ue734"
+          unpin_icon: "\ue735"
+        callbacks:
+          on_left: "toggle_menu"
+          on_right: "exec cmd /c Taskmgr"
+
+  memory:
+      type: "yasb.memory.MemoryWidget"
+      options:
+        label: "<span>\ueea0</span>"
+        update_interval: 5000
+        menu:
+          enabled: true
+          blur: true
+          round_corners: false
+          alignment: "center"
+          direction: "down"
+          offset_top: 2
+          pin_icon: "\ue734"
+          unpin_icon: "\ue735"
+        callbacks:
+          on_left: "toggle_menu"
+          on_right: "exec cmd /c Taskmgr"
+
+  wifi:
+      type: "yasb.wifi.WifiWidget"
+      options:
+        label: "<span>{wifi_icon}</span>"
+        label_alt: "<span>{wifi_icon}</span> {wifi_name}"
+        ethernet_label: "<span>{wifi_icon}</span>"
+        update_interval: 5000
+        ethernet_icon: "\ue839"
+        wifi_icons:
+          - "\udb82\udd2e" # 0% strength (no wifi)
+          - "\udb82\udd1f" # 1-25% strength
+          - "\udb82\udd22" # 26-50% strength
+          - "\udb82\udd25" # 51-75% strength
+          - "\udb82\udd28" # 76-100% strength. Alternate theming: \uf1eb
+        callbacks:
+          on_middle: "do_nothing"
+          on_right: "exec cmd.exe /c start ms-settings:network"
+
+  disk:
+      type: "yasb.disk.DiskWidget"
+      options:
+          label: "<span>\ueda2</span>"
+          group_label:
+            volume_labels: ["C", "D", "E", "F"]
+            show_label_name: true
+            blur: true
+            round_corners: false
+            alignment: "center"
+            direction: "down"
+            offset_top: 2
+          volume_label: "C"
+          update_interval: 60 # Update interval in seconds
+          callbacks:
+            on_left: "toggle_group"
+            on_middle: "do_nothing"
+            on_right: "exec explorer C:\\" # Open disk C in file explorer
+
+  volume:
+      type: "yasb.volume.VolumeWidget"
+      options:
+        label: "<span>{icon}</span> {level}"
+        label_alt: "{volume}"
+        volume_icons:
+          - "\uea85"  # Icon for muted
+          - "\ue992"  # Icon for 0-10% volume
+          - "\ue993"  # Icon for 11-30% volume
+          - "\ue994"  # Icon for 31-60% volume
+          - "\ue995"  # Icon for 61-100% volume
+        callbacks:
+          # on_left: "exec quick_settings"
+          on_middle: "do_nothing"
+          on_right: "exec cmd.exe /c start ms-settings:sound"
+        audio_menu:
+          blur: true
+          round_corners: false
+          alignment: "center"
+          direction: "down"
+          offset_top: 2
+          show_apps: true
+          show_app_labels: false
+          show_app_icons: true
+          show_apps_expanded: true
+
+  media_player:
+        type: "yasb.media.MediaWidget"
+        options:
+          label: "{artist} - {title}"
+          label_alt: "{title}"
+          scrolling_label:
+            enabled: true
+            update_interval_ms: 33
+            style: "left"
+            always_scroll: false
+            separator: " >.< "
+          max_field_size:
+            label: 20
+            label_alt: 30
+          show_thumbnail: true
+          controls_only: false
+          controls_left: true
+          hide_empty: true
+          thumbnail_alpha: 25
+          thumbnail_padding: 8
+          thumbnail_corner_radius: 0 # Set to 0 for square corners
+          thumbnail_edge_fade: true
+          icons:
+            prev_track: "\ue622"
+            next_track: "\ue623"
+            play: "\uf5b0"
+            pause: "\ue62e"
+
+  traffic:
+      type: "yasb.traffic.TrafficWidget"
+      options:
+        # can be: download_speed, download_justified, download_category, and same for upload
+        label: "<div style=\"text-align:right\">{upload_speed} \uf176</div><div style=\"text-align:right;\">{download_speed} \uf175</div>"
+        update_interval: 1000 # Update interval should be a multiple of 1000
+        hide_if_offline: true
+        menu:
+          blur: true
+          round_corners: false
+          alignment: "center"
+          direction: "down"
+          offset_top: 2
+        callbacks:
+          on_left: "toggle_menu"
+          on_right: "exec cmd.exe /c start ms-settings:network"
+
+  power_menu:
+      type: "yasb.power_menu.PowerMenuWidget"
+      options:
+        label: "<span>\ue62a</span>"
+        blur_background: true
+        animation_duration: 200 # Milisecond 
+        button_row: 3 # Number of buttons in row, min 1 max 5
+        buttons:
+          lock: ["\ue72e","Lock"]
+          # signout: ["\udb80\udf43","Sign out"]
+          sleep: ["\uf1db","Sleep"]
+          shutdown: ["\ue7e8","Shut Down"]
+          restart: ["\ue777","Restart"]
+          hibernate: ["\ue823","Hibernate"]
+          cancel: ["\ue711","Cancel"]
+          #force_shutdown: ["\uf011","Force Shut Down"]
+          #force_restart: ["\uead2","Force Restart"]
+
+  notifications:
+      type: "yasb.notifications.NotificationsWidget"
+      options:
+        label: "<span>\uf2a5</span> {count}"
+        hide_empty: true
+        tooltip: false
+        callbacks:
+          on_left: "toggle_notification"
+          on_right: "do_nothing"
